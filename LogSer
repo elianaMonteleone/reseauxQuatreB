@@ -1,0 +1,23 @@
+port 1300 
+>TypeRequete 2 
+ Reference 0 
+ NumeroFacture 0 
+ Date 0 
+ Reference 1 
+ Places 1 
+ Prix 0 
+ Constructeur  
+ Modele  
+ Client prova
+ 
+ Puissance 0 
+
+RechercheME_RC>
+(fonction recherche)Ouverture reussie VehiculesHV
+RechercheME_RC<
+(fonction recherche)Ouverture reussie VehiculesHV
+(fonction achat)Ouverture reussie VehiculesHV
+(fonction facturation) Ouverture du fichier FactureHV reussie 
+(fonction facturation) nombre facture déjà présente avant ajout: 20
+bytes ecrits:184
+test
