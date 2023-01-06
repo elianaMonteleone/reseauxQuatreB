@@ -9,7 +9,6 @@ void AProposServeurHV(char *Version,char *Nom1,char* Nom2){
 }
 
 int RechercheME_RC(char *NomFichier, int Reference, struct VehiculeHV *UnRecord){
-    
    //Ouverture fichier dans lequel rechercher le vehicule
    FILE *fichier = fopen(NomFichier, "r");
    if(fichier == NULL){
@@ -56,6 +55,7 @@ int AchatME_RC(char *NomFichier, int Reference, int Quantite){
          fwrite(&UnRecord, sizeof(struct VehiculeHV), 1, fichier);
          fflush(fichier);
          fclose(fichier);
+         printf("(fonction achat) Mise à jour de la quantite réussie\n");
          return 0;
       }
    }
@@ -77,7 +77,7 @@ int FacturationME_RC(char *NomFichier, char NomClient[40], int quantite, int ref
       fprintf(stderr,"(fonction facturation) Ouverture du fichier %s reussie \n", NomFichier);
    
    int nombre_facture = ftell(fichier)/sizeof(struct FactureHV);
-   fprintf(stderr, "(fonction facturation) nombre facture déjà présente avant ajout: %d\n", nombre_facture);
+   fprintf(stderr, "(fonction facturation) Nombre facture déjà présente avant ajout: %d\n", nombre_facture);
 
    time_t heure_actuelle;
    time(&heure_actuelle);
@@ -93,5 +93,5 @@ int FacturationME_RC(char *NomFichier, char NomClient[40], int quantite, int ref
    fflush(fichier);
    fclose(fichier);
 
-   return 0;
+   return new_facture.NumeroFacturation;
 }

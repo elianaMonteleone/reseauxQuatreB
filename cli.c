@@ -154,7 +154,8 @@ int main(int argc, char *argv[]){
       case '2':
          UneRequete.Type = Achat;
          UneRequete.Numero = atoi(tampon);
-               // Demande information pour achat
+         
+         // Demande information pour achat
          printf("\nNomClient:");
          fgets(tampon, sizeof(tampon), stdin);
          strcpy(UneRequete.NomClient, tampon);
@@ -171,7 +172,7 @@ int main(int argc, char *argv[]){
          if (rc == -1)
             die("SendDatagram");
          else
-            fprintf(stderr, "Envoi de %d bytes\n", rc);
+            printf("Envoi de %d bytes\n", rc);
 
          memset(&UneRequete, 0, sizeof(struct RequeteME_RC));
          tm = sizeof(struct RequeteME_RC);
@@ -179,8 +180,10 @@ int main(int argc, char *argv[]){
          rc = ReceiveDatagram(Desc, &UneRequete, tm, &sor);
          if (rc == -1)
             die("ReceiveDatagram");
-         else
-            printf("Achat Reussi:%d\n", UneRequete.NumeroFacture);       
+         else{
+            printf("bytes lus %d\n", rc);
+            printf("Achat Reussi Facture: %d\n", UneRequete.NumeroFacture);
+         }
 
          break;
        

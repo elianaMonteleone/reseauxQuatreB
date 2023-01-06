@@ -80,31 +80,34 @@ int main(int argc,char *argv[]){
 
    switch(UneRequete.Type){
       case Question: 
-            result_recherche = RechercheME_RC("VehiculesHV", UneRequete.Reference, &V); 
-            fprintf(stderr,"res :%d Reference:%d %s\n",result_recherche, UneRequete.Puissance, UneRequete.Modele) ;
-            memset(&UneRequete, 0, sizeof(struct RequeteME_RC));
-             if(result_recherche == 1){
-               UneRequete.Type = OK;
-               UneRequete.Reference = V.Reference;
-               strcpy(UneRequete.Constructeur, V.Constructeur);
-               strcpy(UneRequete.Modele, V.Modele);
-               UneRequete.Puissance =V.Puissance;
-               }
-             else
-               UneRequete.Type = Fail;
+         result_recherche = RechercheME_RC("VehiculesHV", UneRequete.Reference, &V); 
+         fprintf(stderr,"res :%d Reference:%d %s\n",result_recherche, UneRequete.Puissance, UneRequete.Modele) ;
+         memset(&UneRequete, 0, sizeof(struct RequeteME_RC));
+         if(result_recherche == 1){
+            UneRequete.Type = OK;
+            UneRequete.Reference = V.Reference;
+            strcpy(UneRequete.Constructeur, V.Constructeur);
+            strcpy(UneRequete.Modele, V.Modele);
+            UneRequete.Puissance = V.Puissance;
+         }
+         else
+            UneRequete.Type = Fail;
          break;
       case Achat: 
-            result_recherche = RechercheME_RC("VehiculesHV", UneRequete.Reference, &V); 
-            if(UneRequete.Reference > 0 && result_recherche == 1){
-               fprintf("Trouve: %c Quantite: %d" ,UneRequete.Modele, UneRequete.Quantite);
+         result_recherche = RechercheME_RC("VehiculesHV", UneRequete.Reference, &V);
+         if(UneRequete.Reference > 0 && result_recherche == 1){
+            printf("Trouve: %s, %s Quantite: %d\n", V.Constructeur, V.Modele, V.Quantite);
+            if(UneRequete.Quantite > 0 && V.Quantite >= UneRequete.Quantite){
                AchatME_RC("VehiculesHV", UneRequete.Reference, UneRequete.Quantite);
-               if(UneRequete.Quantite > 0 && FacturationME_RC("FactureHV", UneRequete.NomClient, UneRequete.Quantite, UneRequete.Reference) > 1){
-                  rc = SendDatagram(Desc, &UneRequete, sizeof(struct RequeteME_RC), &sor);
-               }
-               else {
-                  printf("aucun véhicule");
-               }
+               UneRequete.NumeroFacture = FacturationME_RC("FactureHV", UneRequete.NomClient, UneRequete.Quantite, UneRequete.Reference);
+               rc = SendDatagram(Desc, &UneRequete, sizeof(struct RequeteME_RC), &sor);
+            }
+            else
+               fprintf(stderr, "Stock insuffisant pour achat demandé\n");
          }
+         else 
+            fprintf(stderr, "Aucun véhicule\n");
+
          break;
 
    }
@@ -114,9 +117,8 @@ int main(int argc,char *argv[]){
    if ( rc == -1 )
       die("SendDatagram:");
    else
-      fprintf(stderr, "bytes ecrits:%d\n", rc);
+      printf("bytes ecrits:%d\n", rc);
    
-   fprintf(stderr, "test\n");
    }
 
    close(Desc);
