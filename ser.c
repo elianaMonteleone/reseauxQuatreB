@@ -9,7 +9,6 @@ Un serveur recevant une structure
 #include <stdio.h>
 #include <string.h>
 #include "../udplib/udplib.h"
-//#include "structure.h"
 #include "requeteme_rc.h"
 #include "LibSerME_RC.h"
 #include "data.h"
@@ -72,11 +71,7 @@ int main(int argc,char *argv[]){
    /* attention l'enum peut être codé en short */
    /* reponse avec psos */
 
-   //Recherche du Véhicule avec la ref reçue dans la requête du client
-   fprintf(stderr, "RechercheME_RC>\n");
-   int result_recherche = RechercheME_RC("VehiculesHV", UneRequete.Reference, &V);
-   fprintf(stderr, "RechercheME_RC<\n");
-   //Set UneRequete avec la réponse à la requête du client
+   int result_recherche;
 
    switch(UneRequete.Type){
       case Question: 
@@ -93,17 +88,20 @@ int main(int argc,char *argv[]){
          else
             UneRequete.Type = Fail;
          break;
-      case Achat: 
+      case Achat:
+         //Vérfie que le véhicule que l'on veut acheter existe
          result_recherche = RechercheME_RC("VehiculesHV", UneRequete.Reference, &V);
          if(UneRequete.Reference > 0 && result_recherche == 1){
             printf("Trouve: %s, %s Quantite: %d\n", V.Constructeur, V.Modele, V.Quantite);
+            //Vérification qu'il y a une quantité suffisante du véhicule que l'on veut acheter
             if(UneRequete.Quantite > 0 && V.Quantite >= UneRequete.Quantite){
                AchatME_RC("VehiculesHV", UneRequete.Reference, UneRequete.Quantite);
                UneRequete.NumeroFacture = FacturationME_RC("FactureHV", UneRequete.NomClient, UneRequete.Quantite, UneRequete.Reference);
-               rc = SendDatagram(Desc, &UneRequete, sizeof(struct RequeteME_RC), &sor);
             }
-            else
+            else{
                fprintf(stderr, "Stock insuffisant pour achat demandé\n");
+               UneRequete.NumeroFacture = -1;
+            }
          }
          else 
             fprintf(stderr, "Aucun véhicule\n");

@@ -152,6 +152,7 @@ int main(int argc, char *argv[]){
          AfficheRequeteME_RC(stderr, UneRequete);
          break;
       case '2':
+         //Set les champs de la requête achat à envoyer au serveur
          UneRequete.Type = Achat;
          UneRequete.Numero = atoi(tampon);
          
@@ -167,6 +168,8 @@ int main(int argc, char *argv[]){
          quantite = atoi(tampon);
          UneRequete.Reference = ref; 
          UneRequete.Quantite = quantite;
+
+         //Envoi de la requête au serveur
          rc = SendDatagram(Desc, &UneRequete, sizeof(struct RequeteME_RC), &sos);
 
          if (rc == -1)
@@ -177,6 +180,7 @@ int main(int argc, char *argv[]){
          memset(&UneRequete, 0, sizeof(struct RequeteME_RC));
          tm = sizeof(struct RequeteME_RC);
 
+         //Reception de la réponse du serveur
          rc = ReceiveDatagram(Desc, &UneRequete, tm, &sor);
          if (rc == -1)
             die("ReceiveDatagram");
@@ -186,8 +190,6 @@ int main(int argc, char *argv[]){
          }
 
          break;
-       
-     
       case '3':
          exit(0);
       break;
